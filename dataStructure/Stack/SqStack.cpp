@@ -54,21 +54,21 @@ int main() {
     Elem val;
     SqStack *stack;
     InitStack(stack);
-    printf("The stack is enpty? \%s \n", IsEmpty(stack)?"yes":"no");
+    printf("The stack is empty? \%s \n", IsEmpty(stack)?"yes":"no");
     printf("Push element a,b,c,d,e\n");
 	Push(stack,'a');
 	Push(stack,'b');
 	Push(stack,'c');
 	Push(stack,'d');
 	Push(stack,'e');
-    printf("The stack is enpty? \%s \n", IsEmpty(stack)?"yes":"no");
+    printf("The stack is empty? \%s \n", IsEmpty(stack)?"yes":"no");
     printf("The pop sequence is: \n");
     while (!IsEmpty(stack)) {
         Pop(stack, val);
         printf("%c ", val);
     }
     printf("\n");
-    printf("The stack is enpty? \%s", IsEmpty(stack)?"yes":"no");
+    printf("The stack is empty? \%s", IsEmpty(stack)?"yes":"no");
     DestroyStack(stack);
     return 0;
 }
