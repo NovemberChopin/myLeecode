@@ -1,15 +1,12 @@
 /**
- * The base operation of squence queue
- * 
- * Queue: first come first out
- * Element enQueue in the front, and deQueue at the rear
- * Queue is empty: front == rear
- * Queue is full: rear == MaxSize - 1
+ * Circle Queue
+ * Init: front = rear = 0
+ * Queue Empty: front == rear
+ * Queue full: (rear + 1) % MaxSize == front
  * EnQueue: rear++, element enQueue
- * DeQueue: front++, get the first element in the head
- * 
- * The index is increase from the first to end.
+ * DeQueue: front++, get the first element in the head.
  */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,56 +16,56 @@ typedef char Elem;
 typedef struct {
     Elem val[MaxSize];
     int front,rear;
-}SqQueue;
+} SqQueue;
  
 void InitQueue(SqQueue *&q) {
     q = (SqQueue *)malloc(sizeof(SqQueue));
-    q->front= q->rear= -1;
+    q->front= q->rear= 0;
 }
  
 void DestroyQueue(SqQueue *&q) {
     free(q);
 }
-
+ 
 bool IsEmpty(SqQueue *q) {
     return (q->front == q->rear);
 }
 
 bool IsFull(SqQueue *q) {
-    return (q->rear == MaxSize - 1);
+    return ((q->rear + 1) % MaxSize == q->front);
 }
 
-bool enQueue(SqQueue *q, Elem val) {
-    if (IsFull(q)) 
+bool EnQueue(SqQueue *q, Elem val) {
+    if (IsFull(q))
         return false;
-    q->rear++;
+    q->rear = (q->rear + 1) % MaxSize;
     q->val[q->rear] = val;
     return true;
 }
 
-bool deQueue(SqQueue *q, Elem &val) {
+bool DeQueue(SqQueue *q, Elem &val) {
     if (IsEmpty(q)) 
         return false;
-    q->front++;
+    q->front = (q->front + 1) % MaxSize;
     val = q->val[q->front];
     return true;
 }
+
 
 int main() {
     Elem val;
     SqQueue *queue;
     InitQueue(queue);
     printf("The queue is enpty? \%s \n", IsEmpty(queue)?"yes":"no");
-    printf("Push element a,b,c,d,e\n");
-	enQueue(queue,'a');
-	enQueue(queue,'b');
-	enQueue(queue,'c');
-	enQueue(queue,'d');
-	enQueue(queue,'e');
+    printf("Push element a,b,c,d \n");
+	EnQueue(queue,'a');
+	EnQueue(queue,'b');
+	EnQueue(queue,'c');
+	EnQueue(queue,'d');
     printf("The queue is full? \%s \n", IsFull(queue)?"yes":"no");
     printf("The pop sequence is: ");
     while (!IsEmpty(queue)) {
-        deQueue(queue, val);
+        DeQueue(queue, val);
         printf("%c ", val);
     }
     printf("\n");
@@ -76,5 +73,3 @@ int main() {
     DestroyQueue(queue);
     return 0;
 }
-
-
