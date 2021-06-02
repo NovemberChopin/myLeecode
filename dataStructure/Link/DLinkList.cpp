@@ -102,7 +102,7 @@ void Traverse(DLinkList *L) {
 int main() {
     DLinkList *list;
     InitList(list);
-    
+
     // Elem str[] = {'a', 'b', 'c', 'd', 'e'};
     // CreateListR(list, str, 5);
 
