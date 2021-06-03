@@ -58,15 +58,15 @@ int main() {
     Elem val;
     SqQueue *queue;
     InitQueue(queue);
-    printf("The queue is enpty? \%s \n", IsEmpty(queue)?"yes":"no");
-    printf("Push element a,b,c,d,e\n");
+    printf("The queue is empty? \%s \n", IsEmpty(queue)?"yes":"no");
+    printf("EnQueue element a,b,c,d,e\n");
 	enQueue(queue,'a');
 	enQueue(queue,'b');
 	enQueue(queue,'c');
 	enQueue(queue,'d');
 	enQueue(queue,'e');
     printf("The queue is full? \%s \n", IsFull(queue)?"yes":"no");
-    printf("The pop sequence is: ");
+    printf("The deQueue sequence is: ");
     while (!IsEmpty(queue)) {
         deQueue(queue, val);
         printf("%c ", val);
