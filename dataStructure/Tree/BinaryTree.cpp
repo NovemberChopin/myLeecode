@@ -9,7 +9,10 @@ typedef struct node {
     struct node* rchild;
 } BTNode;
 
-
+/**
+ * Create binary from str
+ * @param str: character array
+ */
 void CreateBinaryTree(BTNode *&tree, char *str) {
     BTNode *stack[MaxSize], *s = NULL;
     int top = -1, i = 0, k;
@@ -17,8 +20,7 @@ void CreateBinaryTree(BTNode *&tree, char *str) {
     tree = NULL;
     while (ch!='\0') {
         switch (ch) {
-            case '(': 
-                // k = 1: the next char is lchild
+            case '(': // k = 1: the next char is lchild
                 top++; stack[top]=s; k = 1; break;
             case ')': 
                 top--; break;
@@ -63,7 +65,7 @@ BTNode* RChildNode(BTNode *tree) {
     return tree->rchild;
 }
 
-/* ----------- Traverse tree by recursion method -------------*/
+/* -------------- Traverse tree by recursion method ----------------*/
 
 // void Traverse(BTNode *tree) {
 //     if (tree!=NULL) {
@@ -149,35 +151,110 @@ void DistroyBinaryTree(BTNode *&tree) {
     }
 }
 
-/* -------------------- recursion method ----------------------*/
+/* ----------------------------- end --------------------------------*/
 
+/* -------------------- Non-recursion Traverse ----------------------*/
 
+void PreOrder(BTNode *tree) {
+    BTNode *stack[MaxSize], *s;
+    int top = -1;
+    if (tree != NULL) {
+        top++;
+        stack[top] = tree;
+        while (top > -1) {
+            s = stack[top];
+            top--;
+            printf("%c ", s->val);
+            if (s->rchild != NULL) { // rchild push first
+                top++;
+                stack[top] = s->rchild;
+            }
+            if (s->lchild != NULL) {
+                top++;
+                stack[top] = s->lchild;
+            }
+        }
+        printf("\n");
+    }
+}
+
+void InOrder(BTNode *tree) {
+    BTNode *stack[MaxSize], *s;
+    int top = -1;
+    if (tree != NULL) {
+        s = tree;
+        while (top > -1 || s != NULL) { // 处理 *s 节点的左子树
+            while (s != NULL) { // 扫描 *s 的所有左节点并进栈
+                top++;
+                stack[top] = s;
+                s = s->lchild;
+            }
+            // 此时栈顶元素没有左边孩子 或左子树 均已访问过
+            if (top > -1) {
+                s = stack[top];
+                top--;
+                printf("%c ", s->val);
+                s = s->rchild;  // 处理 *s 的右孩子节点
+            }
+        }
+        printf("\n");
+    }
+}
+
+void LevelOrder(BTNode *tree) {
+    BTNode *p, *queue[MaxSize];
+    int front = 0, rear = 0;
+    rear++;
+    queue[rear] = tree;
+    while (front != rear) { // queue is not empty
+        front = (front + 1) % MaxSize;  // DeQueue
+        p = queue[front];
+        printf("%c ", p->val);
+        if (p->lchild != NULL) {
+            rear = (rear + 1) % MaxSize;
+            queue[rear] = p->lchild;
+        }
+        if (p->rchild != NULL) {
+            rear = (rear + 1) % MaxSize;
+            queue[rear] = p->rchild;
+        }
+    }
+    printf("\n");
+}
+
+/* ----------------------------- end --------------------------------*/
 
 
 int main() {
-    BTNode *b,*p,*lp,*rp;;
+    BTNode *tree,*p,*lp,*rp;;
     char str[] = {"A(B(D,E(H(J,K(L,M(,N))))),C(F,G(,I)))"};
-	CreateBinaryTree(b, str);
-	printf("Display binary tree:");
-    Traverse(b);
+	CreateBinaryTree(tree, str);
+	printf("(1):Display binary tree:");
+    Traverse(tree);
     printf("\n");
-    p=FindNode(b,'H');
+    p=FindNode(tree,'H');
 	if (p!=NULL)
 	{	lp=LChildNode(p);
 		if (lp!=NULL)
-			printf("Left child is %c\n",lp->val);
+			printf("(2):Left child is %c\n",lp->val);
 		else
-			printf("No left child.\n");
+			printf("(2):No left child.\n");
 		rp=RChildNode(p);
 		if (rp!=NULL)
-			printf("Right child is %c\n",rp->val);
+			printf("(3):Right child is %c\n",rp->val);
 		else
-			printf("No right child.\n");
+			printf("(3):No right child.\n");
 	}
-    printf("The depth of the tree is %d\n", BTNodeDepth(b));
-    printf("The number of nodes in the tree is %d\n", NodeNum(b));
-    printf("The level of element L is %d\n", getElemLevel(b, 'L', 1));
-    printf("Destroy binary tree\n");
-    DistroyBinaryTree(b);
+    printf("(4):The depth of the tree is %d\n", BTNodeDepth(tree));
+    printf("(5):The number of nodes in the tree is %d\n", NodeNum(tree));
+    printf("(6):The level of element L is %d\n", getElemLevel(tree, 'L', 1));
+    printf("(7):PreOrder with Non-recursion method:");
+    PreOrder(tree);
+    printf("(8):InOrder with Non-recursion method:");
+    InOrder(tree);
+    printf("(9):LevelOrder squence is:");
+    LevelOrder(tree);
+    printf("(7):Destroy binary tree\n");
+    DistroyBinaryTree(tree);
     return 0;
 }
