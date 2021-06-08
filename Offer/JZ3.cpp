@@ -1,17 +1,15 @@
 #include <iostream>
 #include <vector>
+
+#include <structDefine.h>
+
 using namespace std;
 
-struct ListNode {
-	int val;
-	struct ListNode *next;
-	ListNode(int x) :
-		val(x), next(NULL) {
-	}
-};
 
 /**
  * 输入一个链表，按链表从尾到头的顺序返回一个ArrayList。
+ * 输入：{67,0,24,58}
+ * 返回：[58,24,0,67]
  */
 class Solution {
 public:
