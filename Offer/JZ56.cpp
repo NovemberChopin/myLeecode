@@ -10,6 +10,9 @@ struct ListNode {
     }
 };
 
+/**
+ * 删除有序链表中相同的值
+ */
 class Solution {
 public:
     ListNode* deleteDuplication(ListNode* pHead) {
