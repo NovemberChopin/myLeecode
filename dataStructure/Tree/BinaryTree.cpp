@@ -1,5 +1,9 @@
-#include <stdio.h>
-#include <malloc.h>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <stack>
+
+using namespace std;
 #define MaxSize 100
 
 typedef char Elem;
@@ -178,28 +182,48 @@ void PreOrder(BTNode *tree) {
     }
 }
 
-void InOrder(BTNode *tree) {
-    BTNode *stack[MaxSize], *s;
-    int top = -1;
-    if (tree != NULL) {
-        s = tree;
-        while (top > -1 || s != NULL) { // 处理 *s 节点的左子树
-            while (s != NULL) { // 扫描 *s 的所有左节点并进栈
-                top++;
-                stack[top] = s;
-                s = s->lchild;
-            }
-            // 此时栈顶元素没有左边孩子 或左子树 均已访问过
-            if (top > -1) {
-                s = stack[top];
-                top--;
-                printf("%c ", s->val);
-                s = s->rchild;  // 处理 *s 的右孩子节点
-            }
+// void InOrder(BTNode *tree) {
+//     BTNode *stack[MaxSize], *s;
+//     int top = -1;
+//     if (tree != NULL) {
+//         s = tree;
+//         while (top > -1 || s != NULL) { // 处理 *s 节点的左子树
+//             while (s != NULL) { // 扫描 *s 的所有左节点并进栈
+//                 top++;
+//                 stack[top] = s;
+//                 s = s->lchild;
+//             }
+//             // 此时栈顶元素没有左边孩子 或左子树 均已访问过
+//             if (top > -1) {
+//                 s = stack[top];
+//                 top--;
+//                 printf("%c ", s->val);
+//                 s = s->rchild;  // 处理 *s 的右孩子节点
+//             }
+//         }
+//         printf("\n");
+//     }
+// }
+
+void InOrder(BTNode* tree) {
+    stack<BTNode*> st;
+    if (tree == nullptr) return;
+    BTNode* node = tree;
+    while (!st.empty() || node != nullptr) {
+        while (node != nullptr) {
+            st.push(node);
+            node = node->lchild;
         }
-        printf("\n");
+        if (!st.empty()) {
+            node = st.top();
+            st.pop();
+            printf("%c ", node->val);
+            node = node->rchild;
+        }
     }
+    printf("\n");
 }
+
 
 void LevelOrder(BTNode *tree) {
     BTNode *p, *queue[MaxSize];
@@ -228,7 +252,8 @@ void LevelOrder(BTNode *tree) {
 int main() {
     BTNode *tree,*p,*lp,*rp;;
     char str[] = {"A(B(D,E(H(J,K(L,M(,N))))),C(F,G(,I)))"};
-	CreateBinaryTree(tree, str);
+    char str2[] = {"A(B(D,E),C(F,G))"};
+	CreateBinaryTree(tree, str2);
 	printf("(1):Display binary tree:");
     Traverse(tree);
     printf("\n");
