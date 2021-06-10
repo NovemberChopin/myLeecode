@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <queue>
 #include <stack>
@@ -14,6 +15,29 @@ struct TreeNode {
  
 class Solution {
 public:
+
+    /**
+     * JZ17 树的子结构
+     * 输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
+     * 输入：{8,8,#,9,#,2,#,5},{8,9,#,2}
+     * 输出：true
+     * 思路：以每个节点为根节点，分别判断是否为子树
+     */
+    bool HasSubtree(TreeNode* pRoot1, TreeNode* pRoot2) {
+        if (pRoot1==nullptr || pRoot2==nullptr)
+            return false;
+        return isSubtree(pRoot1, pRoot2) || HasSubtree(pRoot1->left, pRoot2) || HasSubtree(pRoot1->right, pRoot2);
+    }
+    bool isSubtree(TreeNode* b1, TreeNode* b2) {
+        if (b2 == nullptr)  return true;
+        //此处为p2 == null 是匹配完成的条件
+        //最开始p2肯定不为NULL,这是在主程序HasSubtree中判断过的。
+        //递归中，如果p2为空了，则表示上一层的递归中的p2已经匹配完了
+        if (b1 == nullptr) return false;
+        return b1->val == b2->val && isSubtree(b1->left, b2->left) && isSubtree(b1->right, b2->right);
+    }
+
+    
     /**
      * JZ18: 求二叉树的镜像
      *
@@ -80,26 +104,7 @@ public:
         return list;
     }
 
-    /**
-     * JZ17 树的子结构
-     * 输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
-     * 输入：{8,8,#,9,#,2,#,5},{8,9,#,2}
-     * 输出：true
-     * 思路：以每个节点为根节点，分别判断是否为子树
-     */
-    bool HasSubtree(TreeNode* pRoot1, TreeNode* pRoot2) {
-        if (pRoot1==nullptr || pRoot2==nullptr)
-            return false;
-        return isSubtree(pRoot1, pRoot2) || HasSubtree(pRoot1->left, pRoot2) || HasSubtree(pRoot1->right, pRoot2);
-    }
-    bool isSubtree(TreeNode* b1, TreeNode* b2) {
-        if (b2 == nullptr)  return true;
-        //此处为p2 == null 是匹配完成的条件
-        //最开始p2肯定不为NULL,这是在主程序HasSubtree中判断过的。
-        //递归中，如果p2为空了，则表示上一层的递归中的p2已经匹配完了
-        if (b1 == nullptr) return false;
-        return b1->val == b2->val && isSubtree(b1->left, b2->left) && isSubtree(b1->right, b2->right);
-    }
+    
 
     /**
      * JZ38 二叉树的深度
@@ -134,6 +139,38 @@ public:
             level++;
         }
         return level;
+    }
+
+    /**
+     * JZ59 按之字型打印二叉树
+     * 输入：{8,6,10,5,7,9,11}
+     * 输出：[[8],[10,6],[5,7,9,11]]
+     * 思路：层序遍历，使用队列
+     */
+    vector<vector<int> > Print(TreeNode* pRoot) {
+        vector<vector<int>> barray;
+        vector<int> temp;    // 存储每一层的数据
+        int level = 0;
+        if (!pRoot) return barray;
+        TreeNode* node;
+        queue<TreeNode*> que;
+        que.push(pRoot);
+        while(!que.empty()) {
+            int size = que.size();
+            while (size--) {
+                node = que.front();
+                temp.push_back(node->val);
+                que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            if (level % 2 == 1)    // 偶数层反转
+                reverse(temp.begin(), temp.end());
+            barray.push_back(temp);
+            temp.clear();
+            level++;
+        }
+        return barray;
     }
 
 
