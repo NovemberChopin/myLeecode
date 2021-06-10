@@ -102,6 +102,42 @@ public:
     }
 
     /**
+     * JZ38 二叉树的深度
+     * 输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点
+     * （含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。
+     * 输入：{1,2,3,4,5,#,6,#,#,7}
+     * 输出：4
+     */
+    /*------------- 递归方法 ------------------*/
+    int TreeDepth(TreeNode* pRoot) {
+        if (!pRoot)
+            return 0;
+        int ld = TreeDepth(pRoot->left);
+        int rd = TreeDepth(pRoot->right);
+        return (max(ld, rd)+1);
+    }
+    /*------------- 非递归方法 - 队列------------------*/
+    int TreeDepth(TreeNode* pRoot) {
+        if (!pRoot) return 0;
+        int level = 0;
+        TreeNode* node;
+        queue<TreeNode*> que;
+        que.push(pRoot);
+        while(!que.empty()) {
+            int size = que.size();
+            while (size--) {
+                node = que.front();
+                que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            level++;
+        }
+        return level;
+    }
+
+
+    /**
      * JZ62 二叉搜索树的第 k 个节点
      * 给定一棵二叉搜索树，请找出其中的第k小的TreeNode结点。
      * 输入：{5,3,7,2,4,6,8},3
