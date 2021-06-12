@@ -104,6 +104,34 @@ public:
         return list;
     }
 
+
+    /**
+     * JZ24 二叉树中和为某一值的路径
+     * 输入一颗二叉树的根节点和一个整数，按字典序打印出二叉树中结点值
+     * 的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到
+     * 叶结点所经过的结点形成一条路径
+     * 输入：{10,5,12,4,7},22
+     * 输出：[[10,5,7],[10,12]]
+     * 思路：递归
+     */ 
+    vector<vector<int>> res;
+    vector<int> path;
+    void find(TreeNode* root, int sum) {
+        if (root == nullptr) return;
+        path.push_back(root->val);
+        if (!root->left && !root->right && sum == root->val) 
+            res.push_back(path);
+        else {
+            if (root->left) find(root->left, sum - root->val);
+            if (root->right) find(root->right, sum - root->val);
+        }
+        path.pop_back();
+    }
+    vector<vector<int> > FindPath(TreeNode* root,int expectNumber) {
+        find(root, expectNumber);
+        return res;
+    }
+
     
 
     /**
