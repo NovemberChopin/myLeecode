@@ -159,24 +159,42 @@ void DistroyBinaryTree(BTNode *&tree) {
 
 /* -------------------- Non-recursion Traverse ----------------------*/
 
+// void PreOrder(BTNode *tree) {
+//     BTNode *stack[MaxSize], *s;
+//     int top = -1;
+//     if (tree != NULL) {
+//         top++;
+//         stack[top] = tree;
+//         while (top > -1) {
+//             s = stack[top];
+//             top--;
+//             printf("%c ", s->val);
+//             if (s->rchild != NULL) { // rchild push first
+//                 top++;
+//                 stack[top] = s->rchild;
+//             }
+//             if (s->lchild != NULL) {
+//                 top++;
+//                 stack[top] = s->lchild;
+//             }
+//         }
+//         printf("\n");
+//     }
+// }
+
 void PreOrder(BTNode *tree) {
-    BTNode *stack[MaxSize], *s;
-    int top = -1;
+    stack<BTNode*> st;
+    BTNode *node;
     if (tree != NULL) {
-        top++;
-        stack[top] = tree;
-        while (top > -1) {
-            s = stack[top];
-            top--;
-            printf("%c ", s->val);
-            if (s->rchild != NULL) { // rchild push first
-                top++;
-                stack[top] = s->rchild;
-            }
-            if (s->lchild != NULL) {
-                top++;
-                stack[top] = s->lchild;
-            }
+        st.push(tree);
+        while (!st.empty()) {
+            node = st.top();
+            st.pop();
+            printf("%c ", node->val);
+            if (node->rchild != NULL)
+                st.push(node->rchild);
+            if (node->lchild != NULL)
+                st.push(node->lchild);
         }
         printf("\n");
     }
