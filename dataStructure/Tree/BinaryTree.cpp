@@ -267,6 +267,26 @@ void LevelOrder(BTNode *tree) {
 /* ----------------------------- end --------------------------------*/
 
 
+/**
+ * Create BinaryTree from preOrder and inOrder 
+ */ 
+BTNode *CreateBTFromPreAndIn(char *pre, char *in, int n) {
+    BTNode *b;
+    char *p;
+    int k;
+    if (n <= 0) return nullptr;
+    b = (BTNode*)malloc(sizeof(BTNode));
+    b->val = *pre;
+    for (p = in; p < in + n; p++)       // 在中序序列中找到 *pre 的节点位置 k
+        if (*p == *pre)                 // pre 指向根节点
+            break;                      // 在 in 中找到后退出循环
+    k = p - in;                         // 确定根节点在 in 中的位置（下标）
+    b->lchild = CreateBTFromPreAndIn(pre+1, in, k);    
+    // p+1: p 指向中序的根节点，p+1就是右子树的中序。右子树的长度就是 减去左子树和根节点长度
+    b->rchild = CreateBTFromPreAndIn(pre+k+1, p+1, n-k-1);
+    return b;
+}
+
 int main() {
     BTNode *tree,*p,*lp,*rp;;
     char str[] = {"A(B(D,E(H(J,K(L,M(,N))))),C(F,G(,I)))"};
@@ -297,7 +317,15 @@ int main() {
     InOrder(tree);
     printf("(9):LevelOrder squence is:");
     LevelOrder(tree);
-    printf("(7):Destroy binary tree\n");
+
+    char preOrder[] = {"ABDGCEF"};
+    char inOrder[] = {"DGBAECF"};
+    BTNode *tree2  = CreateBTFromPreAndIn(preOrder, inOrder, 7);
+    printf("(10):Create Binary tree2 from preOrder and inOrder, preOrder is:");
+    PreOrder(tree2);
+
+    printf("(11):Destroy binary tree\n");
     DistroyBinaryTree(tree);
+    DistroyBinaryTree(tree2);
     return 0;
 }
