@@ -243,32 +243,56 @@ void InOrder(BTNode* tree) {
 }
 
 
+// void LevelOrder(BTNode *tree) {
+//     BTNode *p, *queue[MaxSize];
+//     int front = 0, rear = 0;
+//     rear++;
+//     queue[rear] = tree;
+//     while (front != rear) { // queue is not empty
+//         front = (front + 1) % MaxSize;  // DeQueue
+//         p = queue[front];
+//         printf("%c ", p->val);
+//         if (p->lchild != NULL) {
+//             rear = (rear + 1) % MaxSize;
+//             queue[rear] = p->lchild;
+//         }
+//         if (p->rchild != NULL) {
+//             rear = (rear + 1) % MaxSize;
+//             queue[rear] = p->rchild;
+//         }
+//     }
+//     printf("\n");
+// }
+
+
 void LevelOrder(BTNode *tree) {
-    BTNode *p, *queue[MaxSize];
-    int front = 0, rear = 0;
-    rear++;
-    queue[rear] = tree;
-    while (front != rear) { // queue is not empty
-        front = (front + 1) % MaxSize;  // DeQueue
-        p = queue[front];
-        printf("%c ", p->val);
-        if (p->lchild != NULL) {
-            rear = (rear + 1) % MaxSize;
-            queue[rear] = p->lchild;
+    // 层次遍历，同时可以统计数的深度
+    BTNode *node=tree;
+    queue<BTNode*> q;
+    if (!tree) return;
+    q.push(node);
+    int level = 0;
+    while (!q.empty()) {
+        int sz = q.size();
+        while (sz--) {
+            node = q.front();
+            q.pop();
+            printf("%c ", node->val);
+            if (node->lchild != NULL)
+                q.push(node->lchild);
+            if (node->rchild != NULL)
+                q.push(node->rchild);
         }
-        if (p->rchild != NULL) {
-            rear = (rear + 1) % MaxSize;
-            queue[rear] = p->rchild;
-        }
+        level++;
     }
-    printf("\n");
+    printf(" level is %d \n", level);
 }
 
 /* ----------------------------- end --------------------------------*/
 
 
 /**
- * Create BinaryTree from preOrder and inOrder 
+ * Create BinaryTree from preOrder and inOrder (使用指针)
  */ 
 BTNode *CreateBTFromPreAndIn(char *pre, char *in, int n) {
     BTNode *b;
@@ -286,6 +310,38 @@ BTNode *CreateBTFromPreAndIn(char *pre, char *in, int n) {
     b->rchild = CreateBTFromPreAndIn(pre+k+1, p+1, n-k-1);
     return b;
 }
+
+// 使用数组实现重建
+BTNode* reConstructBinaryTree(vector<int> pre,vector<int> vin) {
+    int vinlen = vin.size();
+    if (vinlen==0)    return NULL;
+    vector<int> pre_left, pre_right, vin_left, vin_right;
+    // 创建根节点 -> 前序遍历第一个数
+    BTNode* head = new BTNode(pre[0]);
+    // 找到中序遍历根节点的位置，存放在 gen 中
+    int gen = 0;
+    for (int i = 0; i < vinlen; i++) {
+        if (vin[i] == pre[0]) {
+            gen = i;
+            break;
+        }
+    }
+    // 对于中序遍历，根节点左边的节点位于二叉树的左边，
+    // 根节点右边的节点位于二叉树的右边
+    for (int i = 0; i < gen; i++) {    // 左子树
+        vin_left.push_back(vin[i]);
+        pre_left.push_back(pre[i+1]);    //先序第一个为根节点
+    }
+    for (int i = gen+1; i < vinlen; i++) {    // 右子树
+        vin_right.push_back(vin[i]);
+        pre_right.push_back(pre[i]);
+    }
+    // 递归，执行上述步骤，直到根节点
+    head->left = reConstructBinaryTree(pre_left, vin_left);
+    head->right = reConstructBinaryTree(pre_right, vin_right);
+    return head;
+}
+
 
 int main() {
     BTNode *tree,*p,*lp,*rp;;

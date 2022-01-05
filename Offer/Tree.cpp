@@ -17,7 +17,7 @@ class Solution {
 public:
 
     /**
-     * JZ17 树的子结构
+     * JZ26 树的子结构
      * 输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
      * 输入：{8,8,#,9,#,2,#,5},{8,9,#,2}
      * 输出：true
@@ -39,7 +39,7 @@ public:
 
     
     /**
-     * JZ18: 求二叉树的镜像
+     * JZ27: 求二叉树的镜像
      *
      * @param pRoot TreeNode类 
      * @return TreeNode类
@@ -54,9 +54,30 @@ public:
         pRoot->right = pl;
         return pRoot;
     }
+    // 前序遍历（用栈）
+    TreeNode* Mirror(TreeNode* pRoot) {
+        stack<TreeNode*> st;
+        if (!pRoot) return NULL;
+        TreeNode* node, *temp;
+        st.push(pRoot);
+        while(!st.empty()) {
+            node = st.top();
+            st.pop();
+            // 交换左右节点指针
+            temp = node->left;
+            node->left = node->right;
+            node->right = temp;
+            
+            if (node->right) st.push(node->right);
+            if (node->left) st.push(node->left);
+        }
+        return pRoot;
+    }
+
+
 
     /**
-     * JZ22: 从上往下打印二叉树
+     * JZ32: 从上往下打印二叉树
      * 从上往下打印出二叉树的每个节点，同层节点从左至右打印。
      * 思路：层次遍历
      */
@@ -244,5 +265,151 @@ public:
             }
         }
         return nullptr;
+    }
+
+
+    /**
+     * JZ54 二叉搜索数的第K个节点
+     * 
+     *代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     * 
+     * @param proot TreeNode类 
+     * @param k int整型 
+     * @return int整型
+     */
+    int count = 0;    // 遍历的节点数
+    int result = -1;
+    int KthNode(TreeNode* proot, int k) {
+        // write code here
+//         stack<TreeNode*> st;
+//         TreeNode* node = proot;
+//         vector<int> vt;
+//         if (!proot || k==0) return -1;
+//         while(!st.empty() || node != NULL) {
+//             while(node != NULL) {
+//                 st.push(node);
+//                 node = node->left;
+//             }
+//             if (!st.empty()) {
+//                 node = st.top();
+//                 vt.push_back(node->val);
+//                 st.pop();
+//                 node = node->right;
+//             }
+//         }
+//         if (k > vt.size())
+//             return -1;
+//         else return vt[k-1];
+        
+        // 中序遍历不需要list存储
+//         stack<TreeNode*> st;
+//         TreeNode* node = proot;
+//         int i = 0;
+//         if (!proot || k==0) return -1;
+//         while(!st.empty() || node != NULL) {
+//             while(node != NULL) {
+//                 st.push(node);
+//                 node = node->left;
+//             }
+//             if (!st.empty()) {
+//                 node = st.top();
+//                 i++;
+//                 if (i==k) return node->val;
+//                 st.pop();
+//                 node = node->right;
+//             }
+//         }
+//         return -1;
+        
+        // 递归版本
+        if (proot == NULL || k <= 0)    return -1;
+        KthNode(proot->left, k);
+        count++;
+        if (count == k)    return result = proot->val;
+        KthNode(proot->right, k);
+        return result;
+    }
+
+    //
+    //  JZ7 重建二叉树
+    //  根据前序和中序重建二叉树
+    TreeNode* reConstructBinaryTree(vector<int> pre,vector<int> vin) {
+        int vinlen = vin.size();
+        if (vinlen==0)    return NULL;
+        vector<int> pre_left, pre_right, vin_left, vin_right;
+        // 创建根节点 -> 前序遍历第一个数
+        TreeNode* head = new TreeNode(pre[0]);
+        // 找到中序遍历根节点的位置，存放在 gen 中
+        int gen = 0;
+        for (int i = 0; i < vinlen; i++) {
+            if (vin[i] == pre[0]) {
+                gen = i;
+                break;
+            }
+        }
+        // 对于中序遍历，根节点左边的节点位于二叉树的左边，
+        // 根节点右边的节点位于二叉树的右边
+        for (int i = 0; i < gen; i++) {    // 左子树
+            vin_left.push_back(vin[i]);
+            pre_left.push_back(pre[i+1]);    //先序第一个为根节点
+        }
+        for (int i = gen+1; i < vinlen; i++) {    // 右子树
+            vin_right.push_back(vin[i]);
+            pre_right.push_back(pre[i]);
+        }
+        // 递归，执行上述步骤，直到根节点
+        head->left = reConstructBinaryTree(pre_left, vin_left);
+        head->right = reConstructBinaryTree(pre_right, vin_right);
+        return head;
+    }
+
+    /**
+     * JZ33 二叉搜索树的后续遍历序列
+     * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。
+     */
+    // 方法一：递归法：后续遍历最后一个数为根节点，
+    // 根据根节点大小划分左右节点，判断左子树是否都小于根节点和
+    // 右子树是否大于根节点
+    bool VerifySquenceOfBST(vector<int> sequence) {
+        int sz = sequence.size();
+        if (sz == 0)
+            return false;
+        return check(sequence, 0, sz-1);
+    }
+    bool check(vector<int> sequence, int l, int r) {
+        if (l >= r)    // 若当前子树只有一个节点
+            return true;
+        int root = sequence[r];
+        // 划分出右子树
+        int j = r - 1;
+        while (j >= 0 && sequence[j] > root)
+            j--;
+        // 检查左子树是不是存在大于根节点的节点
+        for (int i = l; i <= j; i++) {
+            if (sequence[i] > root)
+                return false;
+        }
+        return check(sequence, l, j) && check(sequence, j+1, r-1);
+    }
+    // 方法二：使用栈
+    // 二叉树的中序遍历和后序遍历对应着一种栈的压入、弹出序列, 
+    // 而对后序遍历序列从小到大排序就得到了中序遍历序列
+    bool VerifySquenceOfBST(vector<int> sequence) {
+        if (sequence.empty()) return false;
+        vector<int> inOrder(sequence);
+        // 对后序序类进行排序得到中序序列
+        sort(inOrder.begin(), inOrder.end());
+        
+        // 验证 sequence 是否为 inOrder 的一种出栈序列
+        stack<int> st;
+        int i = 0, j = 0;
+        for (i = 0; i < inOrder.size(); i++) {
+            st.push(inOrder[i]);
+            while (!st.empty() && st.top() == sequence[j]) {
+                st.pop();
+                j++;
+            }
+        }
+        return st.empty();
     }
 };

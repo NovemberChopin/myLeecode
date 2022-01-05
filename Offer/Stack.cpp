@@ -133,3 +133,38 @@ public:
         return judge(sequence, 0, sequence.size()-1);
     }
 };
+
+
+/**
+ * JZ 73 反转单词 
+ * 
+ */
+class Solution {
+public:
+    string ReverseSentence(string str) {
+        // 使用库函数
+        if (str.empty()) return str;
+        int i = 0, sz = str.size();
+        // 统计开始的空格个数
+        while (i < sz && str[i] == ' ') ++i;
+        if (i == sz) return str;
+        string result = "";
+        string tmp = "";
+        bool hasstr = false;
+        for (int i = sz-1; i>=0; i--) {
+            // 合并一个单词
+            if (str[i] != ' ') {
+                tmp = str[i] + tmp;
+                hasstr = true;
+            }
+            else if (str[i] == ' ' && hasstr) {
+                // 找到一个单词，将单词合并到结果串中
+                result = result + tmp + " ";
+                tmp = "";
+                hasstr = false;
+            }
+        }
+        if (tmp != " ") result += tmp;
+        return result;
+    }
+};
