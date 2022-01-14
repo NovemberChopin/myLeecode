@@ -512,4 +512,57 @@ public:
         }
         return nullptr;
     }
+
+    /**
+     * JZ28 对称的二叉树 
+     * 给定一棵二叉树，判断其是否是自身的镜像（即：是否对称）
+     */
+    // 方法一：使用递归
+    bool isSame(TreeNode* root1, TreeNode* root2) {
+        if (!root1 && !root2) // 均为空节点：符合 “对称” 要求；
+            return true;
+        if (!root1 || !root2) // 其中一个节点为空，不符合 “对称” 要求；
+            return false;
+        return root1->val == root2->val && isSame(root1->left, root2->right) && isSame(root1->right, root2->left);
+    }
+    bool isSymmetrical(TreeNode* pRoot) {
+        return isSame(pRoot, pRoot);
+    }
+    
+    // 使用层次遍历
+    bool check(vector<TreeNode*> vec) {
+        int i = 0, j = vec.size()-1;
+        while (i < j) {
+            if (vec[i]->val != vec[j]->val)
+                return false;
+            i++;
+            j--;
+        }
+        return true;
+    }
+    bool isSymmetrical2(TreeNode* pRoot) {
+        queue<TreeNode*> qu;
+        TreeNode* node;
+        TreeNode* empytNode = new TreeNode(-1);
+        vector<TreeNode*> vec;
+        if (!pRoot) return true;
+        qu.push(pRoot);
+        while(!qu.empty()) {
+            int size = qu.size();
+            while (size--) {
+                node = qu.front();
+                vec.push_back(node);
+                qu.pop();
+                if (node->val != empytNode->val) {
+                    if (node->left) qu.push(node->left);
+                    else qu.push(empytNode);
+                    if (node->right) qu.push(node->right);
+                    else qu.push(empytNode);
+                }
+            }
+            if (!check(vec)) return false;
+            vec.clear();
+        }
+        return true;
+    }
 };
