@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <map>
 
 using namespace std;
 
@@ -450,4 +451,65 @@ public:
         return Link;
     }
 
+    /**
+     * JZ79 判断是不是平衡二叉树
+     * 输入一棵节点数为 n 二叉树，判断该二叉树是否是平衡二叉树。
+     * 思路：用map存储所有节点的高度，然后递归判断
+     */
+    map<TreeNode*, int> hs;
+    // 使用 hash 表来存储每一个节点的高度，然后利用高度来判断
+    int depth(TreeNode *root) {
+        if (!root)
+            return 0;
+        if (hs.find(root) != hs.end())
+            return hs[root];
+        int ldeep = depth(root->left);
+        int rdeep = depth(root->right);
+        return hs[root] = max(ldeep, rdeep) + 1;
+    }
+    bool judge(TreeNode* root) {
+        if (!root) return true;
+        return abs(hs[root->left] - hs[root->right]) <= 1 && judge(root->left) && judge(root->right);
+    }
+    bool IsBalanced_Solution(TreeNode* pRoot) {
+        depth(pRoot);
+        return judge(pRoot);
+    }
+
+
+    /**
+     * JZ8 二叉树的下一个结点
+     */
+    struct TreeLinkNode {
+        int val;
+        struct TreeLinkNode *left;
+        struct TreeLinkNode *right;
+        struct TreeLinkNode *next;
+        TreeLinkNode(int x) :val(x), left(NULL), right(NULL), next(NULL) {}
+    };
+    void pre_order(TreeLinkNode *root, vector<TreeLinkNode*> &v) {
+        if (!root) return;
+        pre_order(root->left, v);
+        v.push_back(root);
+        pre_order(root->right, v);
+    }
+    TreeLinkNode* GetNext(TreeLinkNode* pNode) {
+        TreeLinkNode *root = nullptr;
+        TreeLinkNode *tmp = pNode;
+        // 1、求出根节点
+        while (tmp) {
+            root = tmp;
+            tmp = tmp->next;
+        }
+        // 2、递归遍历
+        vector<TreeLinkNode*> v;
+        pre_order(root, v);
+        // 3、在 vector 中找到根节点的下一个节点
+        int n = v.size();
+        for (int i = 0; i < n; i++) {
+            if (v[i] == pNode && i + 1 != n)
+                return v[i+1];
+        }
+        return nullptr;
+    }
 };
