@@ -605,4 +605,80 @@ public:
         }
         return true;
     }
+
+    /**
+     * JZ68 二叉搜索树的最近公共祖先
+     */
+    int lowestCommonAncestor(TreeNode* root, int p, int q) {
+        int val = root->val;
+        // 当根节点位于 p 和 q 之间
+        if ((q <= val && val <= p) || (p <= val && val <= q))
+            return root->val;
+        int n = max(p, q);
+        int res;
+        // 当 p q 在 root 的左边时
+        if (root->val > n) {
+            res = lowestCommonAncestor(root->left, p, q);
+            if (res != 0)
+                return res;
+        }
+        // 当 p q 在 root 的右边时
+        if (root->val < n) {
+            res = lowestCommonAncestor(root->right, p, q);
+            if (res != 0)
+                return res;
+        }
+        return 0;
+        
+        /* 简化版本 */
+        // 1.都在左边，或者都在右边，否则有一个就是我，直接跳出，返回我
+        TreeNode* cur = root;
+        while (1) {
+            if (p<cur->val && q<cur->val)
+                cur = cur->left;
+            else if (p > cur->val && q >= cur->val)
+                cur = cur->right;
+            else break;
+        }
+        return cur->val;
+
+        /* 递归简化版本 */
+        int val = root->val;
+        int n = max(p, q);
+        int res;
+        // 当根节点位于 p 和 q 之间
+        if ((q <= val && val <= p) || (p <= val && val <= q))
+            res = root->val;
+        // 当 p q 在 root 的左边时候
+        else if (root->val > n)
+            res = lowestCommonAncestor(root->left, p, q);
+        // 当 p q 在 root 的右边时
+        else if (root->val < n)
+            res = lowestCommonAncestor(root->right, p, q);
+        return res;
+    }
+
+    /**
+     * JZ86 在二叉树中找到两个节点的最近公共祖先
+     * 给定一棵二叉树(保证非空)以及这棵树上的两个节
+     * 点对应的val值 o1 和 o2，请找到 o1 和 o2 的最近公共祖先节点。
+     */
+    TreeNode* helper(TreeNode* root, int o1, int o2) {
+        if (root == nullptr || root->val == o1 || root->val == o2)
+            return root;
+        TreeNode* left = helper(root->left, o1, o2);
+        TreeNode* right = helper(root->right, o1, o2);
+        //如果left为空，说明这两个节点在root结点的右子树上，我们只需要返回右子树查找的结果即可
+        if (left == nullptr) 
+            return right;
+        //同上
+        if (right == nullptr)
+            return left;
+        //如果left和right都不为空，说明这两个节点一个在root的左子树上一个在root的右子树上，
+        //我们只需要返回cur结点即可。
+        return root;
+    }
+    int lowestCommonAncestor(TreeNode* root, int o1, int o2) {
+        return helper(root, o1, o2)->val;
+    }
 };
