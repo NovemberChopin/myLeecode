@@ -126,9 +126,27 @@ public:
         return list;
     }
 
+    /**
+     * JZ82 二叉树中和为某一值的路径(一)
+     * 给定一个二叉树root和一个值 sum ，判断是否有从根节点到叶子节点的节点值之和等于 sum 的路径。
+     */
+    bool hasPathSum(TreeNode* root, int sum) {
+        // write code here
+        if(!root) return false;//特判根节点为空的情况；
+        return pre_order(root,sum);
+    }
+    bool pre_order(TreeNode* root,int sum){
+        if(!root) return false; // 终止条件；
+        // 当前节点为叶子节点，且满足条件
+        if (!root->left && !root->right && sum == root->val) 
+            return true;
+        //分支分别从左右节点判断是否存在；
+        return pre_order(root->left, sum-root->val) || pre_order(root->right, sum-root->val);
+    }
+
 
     /**
-     * JZ34 二叉树中和为某一值的路径
+     * JZ34 二叉树中和为某一值的路径（二）
      * 输入一颗二叉树的根节点和一个整数，按字典序打印出二叉树中结点值
      * 的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到
      * 叶结点所经过的结点形成一条路径
@@ -150,9 +168,31 @@ public:
         }
         path.pop_back();
     }
-    vector<vector<int> > FindPath(TreeNode* root,int expectNumber) {
+    vector<vector<int> > FindPath2(TreeNode* root,int expectNumber) {
         find(root, expectNumber);
         return res;
+    }
+
+    /**
+     * JZ84 二叉树中和为某一值的路径(三)
+     * 给定一个二叉树root和一个整数值 sum ，求该树有多少路径的的节点值之和等于 sum
+     * 路径定义不需要从根节点开始，也不需要在叶子节点结束，但是一定是从父亲节点往下到孩子节点
+     */
+    int n = 0;
+    void dfs(TreeNode* root, int sum) {
+        if (root == NULL) return;
+        if (sum == root->val)
+            n++;
+        dfs(root->left, sum - root->val);
+        dfs(root->right, sum - root->val);
+    }
+    int FindPath3(TreeNode* root, int sum) {
+        // write code here
+        if (!root) return n;
+        dfs(root, sum);        // 查询以某节点为根的路径数
+        FindPath3(root->left, sum);
+        FindPath3(root->right, sum);
+        return n;
     }
 
     
