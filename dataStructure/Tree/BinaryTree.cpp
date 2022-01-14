@@ -11,6 +11,8 @@ typedef struct node {
     Elem val;
     struct node* lchild;
     struct node* rchild;
+    node(int x):
+		val(x), lchild(NULL), rchild(NULL) {}
 } BTNode;
 
 /**
@@ -311,7 +313,7 @@ BTNode *CreateBTFromPreAndIn(char *pre, char *in, int n) {
     return b;
 }
 
-// 使用数组实现重建
+// 使用前序和中序数组重建二叉树
 BTNode* reConstructBinaryTree(vector<int> pre,vector<int> vin) {
     int vinlen = vin.size();
     if (vinlen==0)    return NULL;
@@ -337,8 +339,8 @@ BTNode* reConstructBinaryTree(vector<int> pre,vector<int> vin) {
         pre_right.push_back(pre[i]);
     }
     // 递归，执行上述步骤，直到根节点
-    head->left = reConstructBinaryTree(pre_left, vin_left);
-    head->right = reConstructBinaryTree(pre_right, vin_right);
+    head->lchild = reConstructBinaryTree(pre_left, vin_left);
+    head->rchild = reConstructBinaryTree(pre_right, vin_right);
     return head;
 }
 

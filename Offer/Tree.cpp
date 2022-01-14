@@ -127,7 +127,7 @@ public:
 
 
     /**
-     * JZ24 二叉树中和为某一值的路径
+     * JZ34 二叉树中和为某一值的路径
      * 输入一颗二叉树的根节点和一个整数，按字典序打印出二叉树中结点值
      * 的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到
      * 叶结点所经过的结点形成一条路径
@@ -138,7 +138,8 @@ public:
     vector<vector<int>> res;
     vector<int> path;
     void find(TreeNode* root, int sum) {
-        if (root == nullptr) return;
+        if (root == nullptr) 
+            return;
         path.push_back(root->val);
         if (!root->left && !root->right && sum == root->val) 
             res.push_back(path);
@@ -224,7 +225,7 @@ public:
 
 
     /**
-     * JZ62 二叉搜索树的第 k 个节点
+     * JZ54 二叉搜索树的第 k 个节点
      * 给定一棵二叉搜索树，请找出其中的第k小的TreeNode结点。
      * 输入：{5,3,7,2,4,6,8},3
      * 输出：{4}
@@ -279,56 +280,58 @@ public:
      */
     int count = 0;    // 遍历的节点数
     int result = -1;
-    int KthNode(TreeNode* proot, int k) {
+    int KthNode2(TreeNode* proot, int k) {
         // write code here
-//         stack<TreeNode*> st;
-//         TreeNode* node = proot;
-//         vector<int> vt;
-//         if (!proot || k==0) return -1;
-//         while(!st.empty() || node != NULL) {
-//             while(node != NULL) {
-//                 st.push(node);
-//                 node = node->left;
-//             }
-//             if (!st.empty()) {
-//                 node = st.top();
-//                 vt.push_back(node->val);
-//                 st.pop();
-//                 node = node->right;
-//             }
-//         }
-//         if (k > vt.size())
-//             return -1;
-//         else return vt[k-1];
+        stack<TreeNode*> st;
+        TreeNode* node = proot;
+        vector<int> vt;
+        if (!proot || k==0) return -1;
+        while(!st.empty() || node != NULL) {
+            while(node != NULL) {
+                st.push(node);
+                node = node->left;
+            }
+            if (!st.empty()) {
+                node = st.top();
+                vt.push_back(node->val);
+                st.pop();
+                node = node->right;
+            }
+        }
+        if (k > vt.size())
+            return -1;
+        else return vt[k-1];
         
         // 中序遍历不需要list存储
-//         stack<TreeNode*> st;
-//         TreeNode* node = proot;
-//         int i = 0;
-//         if (!proot || k==0) return -1;
-//         while(!st.empty() || node != NULL) {
-//             while(node != NULL) {
-//                 st.push(node);
-//                 node = node->left;
-//             }
-//             if (!st.empty()) {
-//                 node = st.top();
-//                 i++;
-//                 if (i==k) return node->val;
-//                 st.pop();
-//                 node = node->right;
-//             }
-//         }
-//         return -1;
+        stack<TreeNode*> st;
+        TreeNode* node = proot;
+        int i = 0;
+        if (!proot || k==0) return -1;
+        while(!st.empty() || node != NULL) {
+            while(node != NULL) {
+                st.push(node);
+                node = node->left;
+            }
+            if (!st.empty()) {
+                node = st.top();
+                i++;
+                if (i==k) return node->val;
+                st.pop();
+                node = node->right;
+            }
+        }
+        return -1;
         
         // 递归版本
         if (proot == NULL || k <= 0)    return -1;
-        KthNode(proot->left, k);
+        KthNode2(proot->left, k);
         count++;
         if (count == k)    return result = proot->val;
-        KthNode(proot->right, k);
+        KthNode2(proot->right, k);
         return result;
     }
+
+
 
     //
     //  JZ7 重建二叉树
@@ -412,4 +415,39 @@ public:
         }
         return st.empty();
     }
+
+    /**
+     * JZ36 二叉搜索树与双向链表
+     * 输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。如下图所示
+     * 中序非递归遍历，期间后插建表
+     */
+    TreeNode* Convert(TreeNode* pRootOfTree) {
+        stack<TreeNode*> st;
+        TreeNode *node = pRootOfTree;
+        TreeNode *Link = new TreeNode(-1);
+        TreeNode *rear = Link;
+        if (node == NULL)
+            return node;
+        while (!st.empty() || node) {
+            while (node) {
+                st.push(node);
+                node = node->left;
+            }
+            if (!st.empty()) {
+                node = st.top();
+                st.pop();
+                rear->right = node;
+                node->left = rear;
+                rear = node;
+                node = node->right;
+            }
+        }
+        rear->right = NULL;
+        // 去掉第一个头节点
+        Link = Link->right;
+        free(Link->left);
+        Link->left = NULL;
+        return Link;
+    }
+
 };
